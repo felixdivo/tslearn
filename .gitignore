@@ -117,3 +117,5 @@ docs/**/sg_execution_times.rst
 # Local files
 private_info.md
 release.sh
+
+.devcontainer/

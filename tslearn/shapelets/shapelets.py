@@ -45,6 +45,11 @@ from ..utils import (
 
 __author__ = 'Romain Tavenard romain.tavenard[at]univ-rennes2.fr'
 
+# Limit repeated notifications about the default `scale` behavior to at most
+# one message per process to avoid excessive test noise while keeping an
+# explicit notice visible.
+_warned_about_scale_default = False
+
 
 def _kmeans_init_shapelets(X, n_shapelets, shp_len, n_draw=10000):
     n_ts, sz, d = X.shape
@@ -81,6 +86,9 @@ class GlobalMinPooling1D(Layer):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        # This layer handles masks passed by upstream layers; inform Keras
+        # that we support masking to avoid warnings about mask destruction.
+        self.supports_masking = True
         self.input_spec = InputSpec(ndim=3)
 
     def compute_output_shape(self, input_shape):
@@ -112,6 +120,9 @@ class GlobalArgminPooling1D(Layer):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        # This layer handles masks passed by upstream layers; inform Keras
+        # that we support masking to avoid warnings about mask destruction.
+        self.supports_masking = True
         self.input_spec = InputSpec(ndim=3)
 
     def compute_output_shape(self, input_shape):
@@ -494,10 +505,13 @@ class LearningShapelets(TimeSeriesMixin, ClassifierMixin, TransformerMixin, Base
             Time series labels.
         """
         if not self.scale:
-            warnings.warn("The default value for 'scale' is set to False "
-                          "in version 0.4 to ensure backward compatibility, "
-                          "but is likely to change in a future version.",
-                          FutureWarning)
+            global _warned_about_scale_default
+            if not _warned_about_scale_default:
+                warnings.warn("The default value for 'scale' is set to False "
+                              "in version 0.4 to ensure backward compatibility, "
+                              "but is likely to change in a future version.",
+                              FutureWarning, stacklevel=2)
+                _warned_about_scale_default = True
 
         X, y = check_X_y(X, y, allow_nd=True, force_all_finite=False)
         X = self._preprocess_series(X)

@@ -813,13 +813,13 @@ def test_frechet():
     with pytest.raises(ValueError):
         tslearn.metrics.frechet(
             [],
-            np.random.randn(3, 2)
+            np.random.randn(3, 2, 1)
         )
 
     with pytest.raises(ValueError):
         tslearn.metrics.frechet(
-            np.random.randn(3, 1),
-            np.random.randn(3, 2)
+            np.random.randn(3, 1, 1),
+            np.random.randn(3, 2, 1)
         )
 
     np.random.seed(42)

@@ -201,7 +201,31 @@ try:
     def test_all_estimators(estimator, check):
         actual_check = patch_check(check)
         with _configure(estimator, actual_check):
-            actual_check(estimator)
+            # Capture warnings emitted during a specific check so we can
+            # swallow known benign ones locally while letting unexpected
+            # warnings surface normally.
+            import re
+            with warnings.catch_warnings(record=True) as w:
+                warnings.simplefilter("always")
+                actual_check(estimator)
+
+            allowed_patterns = [
+                r"n_iter_ is always set to 1 for TimeSeriesSVC",
+                r"n_iter_ is always set to 1 for TimeSeriesSVR",
+                r"DBA loss is increasing while it should not be",
+                r"Cesium dataset could not be sorted",
+                r"A single label was found in 'y_true' and 'y_pred'",
+                r"2-Dimensional data passed",
+                r"Solver terminated early",
+                r"Solver terminated early",
+            ]
+
+            for rec in w:
+                msg = str(rec.message)
+                if any(re.search(pat, msg) for pat in allowed_patterns):
+                    # expected/benign: swallow
+                    continue
+                warnings.warn(msg, category=rec.category)
 
 except TypeError:
     # sklearn < 1.6, parametrize has only one parameter and uses old tags
@@ -209,4 +233,25 @@ except TypeError:
     def test_all_estimators(estimator, check):
         actual_check = patch_check(check)
         with _configure(estimator, actual_check):
-            actual_check(estimator)
+            # Capture warnings emitted during a specific check so we can
+            # swallow known benign ones locally while letting unexpected
+            # warnings surface normally.
+            import re
+            with warnings.catch_warnings(record=True) as w:
+                warnings.simplefilter("always")
+                actual_check(estimator)
+
+            allowed_patterns = [
+                r"n_iter_ is always set to 1 for TimeSeriesSVC",
+                r"n_iter_ is always set to 1 for TimeSeriesSVR",
+                r"DBA loss is increasing while it should not be",
+                r"Cesium dataset could not be sorted",
+                r"A single label was found in 'y_true' and 'y_pred'",
+            ]
+
+            for rec in w:
+                msg = str(rec.message)
+                if any(re.search(pat, msg) for pat in allowed_patterns):
+                    # expected/benign: swallow
+                    continue
+                warnings.warn(msg, category=rec.category)

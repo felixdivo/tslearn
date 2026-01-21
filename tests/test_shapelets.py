@@ -21,7 +21,8 @@ def test_shapelets():
                             max_iter=1,
                             verbose=0,
                             optimizer="sgd",
-                            random_state=0)
+                            random_state=0,
+                            scale=False)
 
     cross_validate(clf, time_series, y, cv=2)
 
@@ -29,10 +30,11 @@ def test_shapelets():
                             max_iter=1,
                             verbose=0,
                             optimizer=Adam(learning_rate=.1),
-                            random_state=0)
+                            random_state=0,
+                            scale=False)
     cross_validate(clf, time_series, y, cv=2)
 
-    model = shapelets.LearningShapelets(n_shapelets_per_size={3: 2, 4: 1}, max_iter=1)
+    model = shapelets.LearningShapelets(n_shapelets_per_size={3: 2, 4: 1}, max_iter=1, scale=False)
     model.fit(time_series, y)
     for shp, shp_bis in zip(model.shapelets_,
                             model.shapelets_as_time_series_):
@@ -43,7 +45,8 @@ def test_shapelets():
     clf = shapelets.LearningShapelets(n_shapelets_per_size={2: 5},
                             max_iter=1,
                             verbose=0,
-                            random_state=0)
+                            random_state=0,
+                            scale=False)
     clf.fit(time_series, y)
     preds_before = clf.predict_proba(time_series)
     weights = clf.get_weights()
@@ -56,7 +59,8 @@ def test_shapelets():
 
     clf = shapelets.LearningShapelets(max_iter=1,
                             verbose=0,
-                            random_state=0)
+                            random_state=0,
+                            scale=False)
     clf.fit(time_series, y)
     assert clf.shapelets_.shape == (6,)
     assert clf.shapelets_as_time_series_.shape == (6, 3, 2)
@@ -71,7 +75,8 @@ def test_shapelet_lengths():
     clf = shapelets.LearningShapelets(n_shapelets_per_size={3: 1},
                             max_iter=1,
                             verbose=0,
-                            random_state=0)
+                            random_state=0,
+                            scale=False)
     clf.fit(time_series, y)
 
     weights_shapelet = [np.array([[[1], [2], [3]]])]
@@ -92,7 +97,8 @@ def test_shapelet_lengths():
                             max_iter=1,
                             verbose=0,
                             max_size=6,
-                            random_state=0)
+                            random_state=0,
+                            scale=False)
     clf.fit(time_series[:, :-1], y)  # Fit with size 4
     weights_shapelet = [np.array([[[1], [2], [3]]])]
     clf.set_weights(weights_shapelet, layer_name="shapelets_0")
@@ -128,7 +134,8 @@ def test_series_lengths():
     clf = shapelets.LearningShapelets(n_shapelets_per_size={8: 1},
                             max_iter=1,
                             verbose=0,
-                            random_state=0)
+                            random_state=0,
+                            scale=False)
     np.testing.assert_raises(ValueError, clf.fit, time_series, y)
 
     # Test small max_size
@@ -138,7 +145,8 @@ def test_series_lengths():
                             max_iter=1,
                             verbose=0,
                             max_size=4,
-                            random_state=0)
+                            random_state=0,
+                            scale=False)
     np.testing.assert_raises(ValueError, clf.fit, time_series, y)
 
 
@@ -151,7 +159,8 @@ def test_locate():
     clf = shapelets.LearningShapelets(n_shapelets_per_size={2: 1},
                             max_iter=100,
                             verbose=0,
-                            random_state=0)
+                            random_state=0,
+                            scale=False)
     clf.fit(time_series, y)
     shapelet = clf.shapelets_[0]
     if backend() == 'torch':

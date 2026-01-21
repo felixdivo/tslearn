@@ -342,4 +342,5 @@ def test_dbscan():
     # Ensure unused params don't raise
     TimeSeriesDBSCAN(metric="softdtw_normalized", n_jobs=1, metric_params={'n_jobs': 1}).fit(X)
     TimeSeriesDBSCAN(metric="dtw", metric_params={'gamma': 2}).fit(X)
-    TimeSeriesDBSCAN(metric="euclidean", metric_params={'whatever': "trimmed"}).fit(X)
+    with pytest.warns(UserWarning, match=r"Some metric_kwargs have been passed"):
+        TimeSeriesDBSCAN(metric="euclidean", metric_params={'whatever': "trimmed"}).fit(X)

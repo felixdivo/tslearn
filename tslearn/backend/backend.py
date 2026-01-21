@@ -87,6 +87,30 @@ class Backend(object):
         self.is_numpy = self.backend_string == "numpy"
         self.is_pytorch = self.backend_string == "pytorch"
 
+        # Only override the `array` method for the NumPy backend to safely
+        # handle objects from other frameworks (e.g., torch tensors or
+        # tensorflow/keras tensors) without triggering NumPy's `__array__`
+        # deprecation about the `copy` keyword. For other backends, keep the
+        # original behavior.
+        if self.is_numpy:
+            def _array(val, dtype=None):
+                import numpy as _np
+                # Handle PyTorch tensors
+                if hasattr(val, "detach") and hasattr(val, "cpu"):
+                    arr = val.detach().cpu().numpy()
+                    return _np.asarray(arr, dtype=dtype) if dtype is not None else _np.asarray(arr)
+                # Handle TensorFlow / Keras tensors
+                if hasattr(val, "numpy") and not isinstance(val, (_np.ndarray, list, tuple)):
+                    try:
+                        arr = val.numpy()
+                        return _np.asarray(arr, dtype=dtype) if dtype is not None else _np.asarray(arr)
+                    except Exception:
+                        pass
+                # Fallback to standard NumPy conversion
+                return _np.asarray(val, dtype=dtype) if dtype is not None else _np.asarray(val)
+
+            setattr(self, "array", _array)
+
     def get_backend(self):
         return self.backend
 

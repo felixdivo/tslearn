@@ -1733,6 +1733,7 @@ def itakura_mask(sz1, sz2, max_slope=2.0, be=None):
             "(ie. leads to no admissible path) for the "
             "provided time series sizes",
             RuntimeWarning,
+            stacklevel=2,
         )
 
     return mask

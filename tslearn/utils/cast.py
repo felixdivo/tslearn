@@ -736,7 +736,8 @@ def from_cesium_dataset(X):
         except ValueError:
             warnings.warn("Cesium dataset could not be sorted, assuming "
                           "it is already sorted before casting to "
-                          "tslearn format.")
+                          "tslearn format.",
+                          stacklevel=2)
         if ts.measurement.ndim == 1:
             data = ts.measurement.reshape((1, -1))
         else:

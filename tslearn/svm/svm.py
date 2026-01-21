@@ -278,7 +278,8 @@ class TimeSeriesSVC(TimeSeriesSVMMixin, ClassifierMixin, BaseEstimator):
     @property
     def n_iter_(self):
         warnings.warn('n_iter_ is always set to 1 for TimeSeriesSVC, since '
-                      'it is non-trivial to access the underlying libsvm')
+                      'it is non-trivial to access the underlying libsvm',
+                      stacklevel=2)
         return 1
 
     @property
@@ -551,7 +552,8 @@ class TimeSeriesSVR(TimeSeriesSVMMixin, RegressorMixin, BaseEstimator):
     @property
     def n_iter_(self):
         warnings.warn('n_iter_ is always set to 1 for TimeSeriesSVR, since '
-                      'it is non-trivial to access the underlying libsvm')
+                      'it is non-trivial to access the underlying libsvm',
+                      stacklevel=2)
         return 1
 
     @property

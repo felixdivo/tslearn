@@ -21,6 +21,7 @@ from tslearn.backend import instantiate_backend
 __author__ = "Romain Tavenard romain.tavenard[at]univ-rennes2.fr"
 
 
+
 def fix_force_all_finite_warning(func):
     """ Make sure to use sklearn >=1.6 ensure_finite_attribute if available
         rather than deprecated force_all_attribute """

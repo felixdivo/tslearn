@@ -75,3 +75,20 @@ testpaths = [
     "tests",
     "tslearn"
 ]
+# Suppress known benign upstream deprecation warnings to reduce noise in CI
+filterwarnings = [
+    "ignore:.*__array__ implementation doesn't accept a copy keyword.*:DeprecationWarning",
+    "ignore:.*__array_wrap__ must accept context and return_scalar arguments.*:DeprecationWarning",
+    "ignore:.*The default value for 'scale' is set to False.*:FutureWarning",
+    # Ignore sklearn SVM n_iter_ informational warnings emitted by estimator_checks
+    "ignore:.*n_iter_ is always set to 1 for TimeSeriesSVC.*:UserWarning",
+    "ignore:.*n_iter_ is always set to 1 for TimeSeriesSVR.*:UserWarning",
+    # Ignore sklearn confusion matrix single-label warnings used in tests
+    "ignore:.*A single label was found in 'y_true' and 'y_pred'.*:UserWarning",
+    # Ignore a small Cesium dataset warning in cast conversions
+    "ignore:Cesium dataset could not be sorted.*:UserWarning",
+    # Ignore convergence warnings from Scikit-learn MLP in tests
+    "ignore:.*Stochastic Optimizer.*Maximum iterations.*:sklearn.exceptions.ConvergenceWarning",
+    # Ignore scikit-learn stable_cumsum deprecation
+    "ignore:Function stable_cumsum is deprecated.*:FutureWarning",
+]

@@ -47,7 +47,7 @@ def extract_from_zip_url(url, target_dir=None, verbose=False):
         return target_dir
     except zipfile.BadZipFile:
         warnings.warn("Corrupted or missing zip file encountered, aborting",
-                      category=RuntimeWarning)
+                      category=RuntimeWarning, stacklevel=2)
         return None
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)

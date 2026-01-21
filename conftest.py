@@ -11,6 +11,26 @@ try:
 except ImportError:
     keras = None
 
+# Quiet downstream library deprecation warnings that are benign in our test
+# environment. We prefer to keep our own library warnings visible, so only
+# suppress specific, well-known messages from NumPy/Keras.
+warnings.filterwarnings(
+    "ignore",
+    message=r".*__array__ implementation doesn't accept a copy keyword.*",
+    category=DeprecationWarning,
+)
+warnings.filterwarnings(
+    "ignore",
+    message=r".*__array_wrap__ must accept context and return_scalar arguments.*",
+    category=DeprecationWarning,
+)
+# Suppress repeated FutureWarning related to LearningShapelets default scale
+warnings.filterwarnings(
+    "ignore",
+    message=r".*The default value for 'scale' is set to False.*",
+    category=FutureWarning,
+)
+
 
 def pytest_ignore_collect(collection_path, *args, **kwargs):
     if keras is None and "shapelets" in collection_path.parts:
@@ -74,10 +94,10 @@ def pytest_collection_modifyitems(config, items):
         ucr_uea_datasets = bool(datasets.list_datasets())
     except Exception as exc:
         ucr_uea_datasets = False
-        warnings.warn("Error listing UCR UEA datasets: {}".format(exc))
+        warnings.warn("Error listing UCR UEA datasets: {}".format(exc), stacklevel=2)
 
     if not ucr_uea_datasets:
-        warnings.warn("Skipping doctests requiring UCR UEA dataset download")
+        warnings.warn("Skipping doctests requiring UCR UEA dataset download", stacklevel=2)
         skip_marker = pytest.mark.skip(reason="Datasets not cached!")
         for item in items:
             if item.name in [

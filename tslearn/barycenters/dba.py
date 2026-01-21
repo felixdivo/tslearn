@@ -168,8 +168,13 @@ def dtw_barycenter_averaging_petitjean(X, barycenter_size=None,
         if abs(cost_prev - cost) < tol:
             break
         elif cost_prev < cost:
-            warnings.warn("DBA loss is increasing while it should not be. "
-                          "Stopping optimization.", ConvergenceWarning)
+            # Notify that DBA loss is increasing and stop optimization.
+            warnings.warn(
+                "DBA loss is increasing while it should not be. "
+                "Stopping optimization.",
+                ConvergenceWarning,
+                stacklevel=2,
+            )
             break
         else:
             cost_prev = cost
@@ -596,8 +601,13 @@ def dtw_barycenter_averaging_one_init(X, barycenter_size=None,
         if abs(cost_prev - cost) < tol:
             break
         elif cost_prev < cost:
-            warnings.warn("DBA loss is increasing while it should not be. "
-                          "Stopping optimization.", ConvergenceWarning)
+            # Notify that DBA loss is increasing and stop optimization.
+            warnings.warn(
+                "DBA loss is increasing while it should not be. "
+                "Stopping optimization.",
+                ConvergenceWarning,
+                stacklevel=2,
+            )
             break
         else:
             cost_prev = cost
@@ -732,8 +742,13 @@ def dtw_barycenter_averaging_subgradient(X, barycenter_size=None,
         if abs(cost_prev - cost) < tol:
             break
         elif cost_prev < cost:
-            warnings.warn("DBA loss is increasing while it should not be. "
-                          "Stopping optimization.", ConvergenceWarning)
+            # Notify that DBA loss is increasing and stop optimization.
+            warnings.warn(
+                "DBA loss is increasing while it should not be. "
+                "Stopping optimization.",
+                ConvergenceWarning,
+                stacklevel=2,
+            )
             break
         else:
             cost_prev = cost

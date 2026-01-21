@@ -293,7 +293,7 @@ def test_serialize_shapelets():
               rng.choice(["one", "two", "three"], size=n)]:
 
         # Test with default args
-        shp = shapelets.LearningShapelets(max_iter=1)
+        shp = shapelets.LearningShapelets(max_iter=1, scale=False)
         _check_not_fitted(shp)
         shp.fit(X, y)
         _check_params_predict(shp, X, ['predict'],

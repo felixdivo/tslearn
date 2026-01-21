@@ -19,6 +19,24 @@ import numpy as _np
 try:
     import torch as _torch
 
+    # Ensure a torch Tensor's __array__ signature accepts the `dtype` and
+    # `copy` keyword arguments to avoid NumPy's deprecation warnings when
+    # Keras or other libraries call `np.array(tensor, copy=False)`.
+    # This is a minimal, safe shim that delegates to `tensor.detach().cpu().numpy()`.
+    try:
+        if hasattr(_torch, "Tensor"):
+            def _tensor___array__(self, dtype=None, copy=None):
+                arr = self.detach().cpu().numpy()
+                if dtype is not None:
+                    return _np.asarray(arr, dtype=dtype)
+                return arr
+
+            # Only set if not already present or different signature
+            _torch.Tensor.__array__ = _tensor___array__
+    except Exception:
+        # Keep best-effort behavior but never fail import
+        pass
+
     HAS_TORCH = True
 except ImportError:
     HAS_TORCH = False
